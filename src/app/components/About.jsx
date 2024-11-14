@@ -3,6 +3,7 @@ import Image from "next/image";
 const About = () => {
   return (
     <section className="bg-white py-10">
+      <div></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
         {/* Left Content */}
         <div className="md:w-1/2 text-center md:text-left">
