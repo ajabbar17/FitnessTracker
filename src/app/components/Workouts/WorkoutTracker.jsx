@@ -14,10 +14,14 @@ const WorkoutTracker = () => {
     title: "",
     description: "",
   });
-  const [userId, setUserId] = useState(1); // Replace with dynamic userId if applicable.
+  const [userId, setUserId] = useState(0); // Replace with dynamic userId if applicable.
+  const [none, setNone] = useState(false);   
 
-  // Fetch workouts from the API
+  // Get the userId from localStorage
+
   useEffect(() => {
+    localStorage.getItem("userId") && setUserId(localStorage.getItem("userId"));
+
     const fetchUserWorkouts = async () => {
       try {
         const response = await axios.get(
@@ -71,6 +75,8 @@ const WorkoutTracker = () => {
     }
   };
 
+  
+
 return (
     <div className="p-6 max-w-7xl pt-24 mx-auto">
         <div className="flex justify-between items-center mb-6">
@@ -83,30 +89,36 @@ return (
                 Add Workout
             </button>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workouts.map((workout) => (
-                <div
-                    key={workout.id}
-                    className="bg-white hover:scale-105 hover:bg-slate-200 transition-all rounded-lg border-2 shadow-md hover:shadow-lg"
-                >
-                    <div className="p-4 flex justify-between items-center">
-                        <h2 className="text-xl font-semibold">{workout.title}</h2>
-                        <button
-                            onClick={() => handleDeleteWorkout(workout.id)}
-                            className="text-red-500 hover:text-red-700 transition-colors"
-                        >
-                            <FaTrash />
-                        </button>
-                    </div>
-                    <div className="p-4">
-                        <p className="text-gray-700">{workout.description}</p>
-                        <p>Planned Date: {new Date(workout.planned_date).toLocaleDateString()}</p>
-                        <p>Status: {workout.status}</p>
-                    </div>
-                </div>
-            ))}
+       
+        <div className={`grid ${workouts.length > 0 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'flex justify-center items-center h-96'} gap-6`}>
+  {workouts.length > 0 ? (
+    workouts.map((workout) => (
+      <div
+        key={workout.id}
+        className="bg-white hover:scale-105 hover:bg-slate-200 transition-all rounded-lg border-2 shadow-md hover:shadow-lg"
+      >
+        <div className="p-4 flex justify-between items-center">
+          <h2 className="text-xl font-semibold">{workout.title}</h2>
+          <button
+            onClick={() => handleDeleteWorkout(workout.id)}
+            className="text-red-500 hover:text-red-700 transition-colors"
+          >
+            <FaTrash />
+          </button>
         </div>
+        <div className="p-4">
+          <p className="text-gray-700">{workout.description}</p>
+          <p>Planned Date: {new Date(workout.planned_date).toLocaleDateString()}</p>
+          <p>Status: {workout.status}</p>
+        </div>
+      </div>
+    ))
+  ) : (
+    <h1 className="text-center  text-lg md:text-4xl font-bold">
+      No workout found. Start by adding a new workout!
+    </h1>
+  )}
+</div>
 
         {isModalOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

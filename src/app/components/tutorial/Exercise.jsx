@@ -25,8 +25,16 @@ export default function Exercises() {
     fetchExercises();
   }, []);
 
-  if (loading) return <div className="text-center">Loading...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin  rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading BodyParts...</p>
+        </div>
+      </div>
+    );
+  }  if (error) return <div className="text-center text-red-500">{error}</div>;
 
   return (
     <div className="container mx-auto py-24 p-4">
@@ -39,6 +47,7 @@ export default function Exercises() {
             onClick={() => router.push(`/tutorials/${exercise}`)}
           >
             <Image
+              loading='lazy'
               width={200}
               height={200}
               src={`/${exercise}.png`}

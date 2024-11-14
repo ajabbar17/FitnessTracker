@@ -3,25 +3,59 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import axios from "axios";
 
-const Signup = ({ onLoginClick }) => {
+const Signup = () => {
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [dob, setDob] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState(null);
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    console.log(firstname, lastname, email, password, confirmPassword);
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3001/auth/signup", {
+        firstname,
+        lastname,
+        email,
+        password,
+      });
+
+      if (response.status === 201) {
+        router.push("/auth/login"); // Redirect to login page
+      }
+    } catch (err) {
+      setError("Signup failed. Please try again.");
+      console.error("Error signing up:", err);
+    }
+  };
 
   return (
     <div>
-      <form className="px-7 h-screen w-auto grid justify-center items-center">
+      <form
+        className="px-7 h-screen w-auto grid justify-center items-center"
+        onSubmit={handleSubmit}
+      >
         <div
-          className="grid gap-4 shadow-md w-auto  shadow-slate-400 hover:scale-105 transition-all transform rounded p-6"
+          className="grid gap-4 shadow-md w-auto shadow-slate-400 hover:scale-105 transition-all transform rounded p-6"
           id="form"
         >
-          <h2 className="text-black text-3xl i text-center font-bold ">
+          <h2 className="text-black text-3xl text-center font-bold">
             Sign Up
           </h2>
+
+          {error && <p className="text-red-500 text-center">{error}</p>}
 
           <div className="w-full flex gap-3">
             <input
@@ -47,13 +81,6 @@ const Signup = ({ onLoginClick }) => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              className="shadow-md text-sm p-3 ex w-full outline-none focus:border-solid focus:border-[1px] border-slate-300 rounded border-2 placeholder:text-gray-500"
-              type="date"
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
-              placeholder="Date Of Birth"
               required
             />
           </div>
@@ -69,7 +96,7 @@ const Signup = ({ onLoginClick }) => {
             <input
               className="shadow-md text-sm p-3 ex w-full outline-none focus:border-solid focus:border-[1px] border-slate-300 rounded border-2 placeholder:text-gray-500"
               type="password"
-              placeholder="Confirm password"
+              placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -82,7 +109,7 @@ const Signup = ({ onLoginClick }) => {
             Submit
           </button>
           <p className="text-gray-500 text-center">
-            Already have an account ?{" "}
+            Already have an account?{" "}
             <Link
               href="/auth/login"
               className="hover:underline font-bold text-black"

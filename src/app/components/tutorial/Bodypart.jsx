@@ -17,8 +17,7 @@ export default function BodyPartExercises({ exercises, bodyPart }) {
         bodyPart = bodyPart.replace("%20", " ");
     }
 
-    if (loading) return <div className="text-center">Loading...</div>;
-    if (error) return <div className="text-center text-red-500">{error}</div>;
+    if (error) return <div className="text-2xl font-bold pt-72 text-center text-red-500">{error}</div>;
 
     return (
         <div className="container pt-24 mx-auto p-4">
