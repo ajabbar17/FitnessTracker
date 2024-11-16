@@ -26,6 +26,9 @@ const BarChart = () => {
   const chartRef = useRef(null);
   const [chartInstance, setChartInstance] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [caloriesData, setCaloriesData] = useState([]);
+  const [proteinData, setProteinData] = useState([]);
+  const [labels, setLabels] = useState([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -40,18 +43,46 @@ const BarChart = () => {
   }, []);
 
   useEffect(() => {
+    const fetchLastSevenDaysData = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/nutritionDash/weekly-totals");
+        const data = await response.json();
+
+        // Assuming the API returns the data in the format with date, total_calories, total_protein
+        const dailyCalories = [];
+        const dailyProtein = [];
+        const dailyLabels = [];
+
+        data.forEach((item) => {
+          dailyLabels.push(item.date); // Add date to labels
+          dailyCalories.push(item.total_calories); // Add calories for each day
+          dailyProtein.push(item.total_protein); // Add protein for each day
+        });
+
+        setCaloriesData(dailyCalories);
+        setProteinData(dailyProtein);
+        setLabels(dailyLabels);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchLastSevenDaysData();
+  }, []);
+
+  useEffect(() => {
     const data = {
-      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      labels: labels,
       datasets: [
         {
           label: "Calories",
-          data: [2000, 2100, 2200, 2300, 2400, 2500, 2600],
+          data: caloriesData,
           backgroundColor: "rgba(255, 99, 132, 0.8)",
           borderRadius: 10, // Rounded corners for bars
         },
         {
           label: "Protein (g)",
-          data: [100, 120, 130, 140, 150, 160, 170],
+          data: proteinData,
           backgroundColor: "rgba(54, 162, 235, 0.6)",
           borderRadius: 10,
         },
@@ -93,7 +124,7 @@ const BarChart = () => {
     return () => {
       if (newChart) newChart.destroy(); // Cleanup on unmount
     };
-  }, [isMobile]);
+  }, [isMobile, caloriesData, proteinData, labels]);
 
   return (
     <div
