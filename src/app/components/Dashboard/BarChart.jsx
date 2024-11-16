@@ -29,8 +29,18 @@ const BarChart = () => {
   const [caloriesData, setCaloriesData] = useState([]);
   const [proteinData, setProteinData] = useState([]);
   const [labels, setLabels] = useState([]);
+  const [userId, setUserId] = useState(null); // Start with null or undefined
+
+ 
 
   useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    console.log("Stored userId:", storedUserId); // Debug stored userId
+
+    if (storedUserId) {
+      setUserId(storedUserId);
+      // Ensure userId is set before making requests
+    }
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -43,9 +53,12 @@ const BarChart = () => {
   }, []);
 
   useEffect(() => {
+    if (!userId) return; // Wait until userId is set before fetching data
+
     const fetchLastSevenDaysData = async () => {
+      console.log(userId);
       try {
-        const response = await fetch("http://localhost:3001/nutritionDash/weekly-totals");
+        const response = await fetch(`http://localhost:3001/nutritionDash/weekly-totals/${userId}`);
         const data = await response.json();
 
         // Assuming the API returns the data in the format with date, total_calories, total_protein
@@ -54,7 +67,7 @@ const BarChart = () => {
         const dailyLabels = [];
 
         data.forEach((item) => {
-          dailyLabels.push(item.date); // Add date to labels
+            dailyLabels.push(new Date(item.date).toLocaleDateString()); // Add formatted date to labels
           dailyCalories.push(item.total_calories); // Add calories for each day
           dailyProtein.push(item.total_protein); // Add protein for each day
         });
@@ -68,7 +81,7 @@ const BarChart = () => {
     };
 
     fetchLastSevenDaysData();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const data = {

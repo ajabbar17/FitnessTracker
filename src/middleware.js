@@ -4,7 +4,7 @@ export function middleware(req) {
   const token = req.cookies.get("authToken");
 
   // Define the protected routes
-  const protectedRoutes = ["/dashboard", "/workouts", "/tutorials"];
+  const protectedRoutes = ["/dashboard", "/workouts", "/tutorials", "/nutrition"];
   const authRoutes = ["/auth/login", "/auth/signup"];
 
   // Check if the current route is protected
@@ -38,6 +38,7 @@ export const config = {
     "/dashboard/:path*",
     "/workouts/:path*",
     "/tutorials/:path*",
+    "/nutrition/:path*",
     "/auth/login",
     "/auth/signup"
   ], // Match protected and auth routes

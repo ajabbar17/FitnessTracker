@@ -18,10 +18,13 @@ const WorkoutTracker = () => {
   const [none, setNone] = useState(false);   
 
   // Get the userId from localStorage
-
   useEffect(() => {
     localStorage.getItem("userId") && setUserId(localStorage.getItem("userId"));
+  }, []);
 
+
+  useEffect(() => {
+    if (!userId) return;
     const fetchUserWorkouts = async () => {
       try {
         const response = await axios.get(
